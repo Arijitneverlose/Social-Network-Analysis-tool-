@@ -1,0 +1,97 @@
+import java.util.*;
+
+class SocialNetwork {
+    private Map<String, User> users;
+
+    public SocialNetwork() {
+        users = new HashMap<>();
+    }
+
+    // Add a user to the network
+    public void addUser(String name) {
+        if (!users.containsKey(name)) {
+            users.put(name, new User(name));
+            System.out.println("User " + name + " added to the network.");
+        }
+    }
+
+    // Connect two users as friends
+    public void addFriendship(String name1, String name2) {
+        User user1 = users.get(name1);
+        User user2 = users.get(name2);
+
+        if (user1 != null && user2 != null) {
+            user1.addFriend(user2);
+            System.out.println(name1 + " and " + name2 + " are now friends.");
+        } else {
+            System.out.println("One or both users not found in the network.");
+        }
+    }
+
+    // Find mutual friends between two users
+    public List<User> findMutualFriends(String name1, String name2) {
+        User user1 = users.get(name1);
+        User user2 = users.get(name2);
+
+        if (user1 != null && user2 != null) {
+            List<User> mutualFriends = new ArrayList<>(user1.getFriends());
+            mutualFriends.retainAll(user2.getFriends());
+            return mutualFriends;
+        }
+        return Collections.emptyList();
+    }
+
+    // Suggest friends for a user
+    public Set<User> suggestFriends(String name) {
+        User user = users.get(name);
+        if (user == null) return Collections.emptySet();
+
+        Set<User> suggestions = new HashSet<>();
+        for (User friend : user.getFriends()) {
+            for (User friendOfFriend : friend.getFriends()) {
+                if (!friendOfFriend.equals(user) && !user.getFriends().contains(friendOfFriend)) {
+                    suggestions.add(friendOfFriend);
+                }
+            }
+        }
+        return suggestions;
+    }
+
+    // Find the shortest path between two users using BFS
+    public List<User> findShortestPath(String name1, String name2) {
+        User start = users.get(name1);
+        User target = users.get(name2);
+        if (start == null || target == null) return Collections.emptyList();
+
+        Map<User, User> previous = new HashMap<>();
+        Queue<User> queue = new LinkedList<>();
+        Set<User> visited = new HashSet<>();
+        
+        queue.add(start);
+        visited.add(start);
+
+        while (!queue.isEmpty()) {
+            User current = queue.poll();
+            if (current.equals(target)) {
+                return buildPath(start, target, previous);
+            }
+
+            for (User friend : current.getFriends()) {
+                if (!visited.contains(friend)) {
+                    queue.add(friend);
+                    visited.add(friend);
+                    previous.put(friend, current);
+                }
+            }
+        }
+        return Collections.emptyList(); // No path found
+    }
+
+    private List<User> buildPath(User start, User target, Map<User, User> previous) {
+        List<User> path = new LinkedList<>();
+        for (User at = target; at != null; at = previous.get(at)) {
+            path.add(0, at);
+        }
+        return path;
+    }
+}
