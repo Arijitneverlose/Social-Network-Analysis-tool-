@@ -1,0 +1,76 @@
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
+
+public class Main {
+    public static void main(String[] args) {
+        SocialNetwork network = new SocialNetwork();
+        Scanner scanner = new Scanner(System.in);
+
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("\nSocial Network Analysis Tool");
+            System.out.println("1. Add User");
+            System.out.println("2. Add Friendship");
+            System.out.println("3. Find Mutual Friends");
+            System.out.println("4. Suggest Friends");
+            System.out.println("5. Find Shortest Path");
+            System.out.println("6. Exit");
+            System.out.print("Choose an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // Consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter username: ");
+                    String userName = scanner.nextLine();
+                    network.addUser(userName);
+                    break;
+
+                case 2:
+                    System.out.print("Enter first username: ");
+                    String user1 = scanner.nextLine();
+                    System.out.print("Enter second username: ");
+                    String user2 = scanner.nextLine();
+                    network.addFriendship(user1, user2);
+                    break;
+
+                case 3:
+                    System.out.print("Enter first username: ");
+                    user1 = scanner.nextLine();
+                    System.out.print("Enter second username: ");
+                    user2 = scanner.nextLine();
+                    List<User> mutualFriends = network.findMutualFriends(user1, user2);
+                    System.out.println("Mutual Friends: " + mutualFriends);
+                    break;
+
+                case 4:
+                    System.out.print("Enter username for friend suggestions: ");
+                    userName = scanner.nextLine();
+                    Set<User> suggestions = network.suggestFriends(userName);
+                    System.out.println("Friend Suggestions: " + suggestions);
+                    break;
+
+                case 5:
+                    System.out.print("Enter start username: ");
+                    user1 = scanner.nextLine();
+                    System.out.print("Enter target username: ");
+                    user2 = scanner.nextLine();
+                    List<User> path = network.findShortestPath(user1, user2);
+                    System.out.println("Shortest Path: " + path);
+                    break;
+
+                case 6:
+                    exit = true;
+                    System.out.println("Exiting the Social Network Analysis Tool.");
+                    break;
+
+                default:
+                    System.out.println("Invalid option, please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+}
